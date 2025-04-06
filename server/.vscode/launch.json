@@ -4,6 +4,19 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Debug Server",
+            "skipFiles": ["<node_internals>/**"],
+            "program": "${workspaceFolder}/src/app.ts",
+            "runtimeArgs": ["--loader", "ts-node/esm"],
+            "env": {
+              "NODE_ENV": "development"
+            },
+            "console": "integratedTerminal"
+          },
+
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Launch Mocha Tests",
             "skipFiles": [
                 "<node_internals>/**"

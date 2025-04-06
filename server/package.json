@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "pretest": "npm run build",
     "test": "mocha \"dist/tests/**/*tests.js\"",
     "start": "ts-node src/app.ts",
     "build": "tsc",
     "start:prod": "node dist/app.js",
     "dev": "ts-node src/app.ts",
-    "watch-ts": "tsc -w", 
+    "watch-ts": "tsc -w",
     "lint-fix:prettier": "prettier --write --loglevel warn \"src/**/*.ts\" \"tests/**/*.ts\""
   },
   "keywords": [],
@@ -16,9 +17,12 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^5.1.0",
+    "pg": "^8.14.1",
     "sequelize": "^6.37.7"
   },
   "devDependencies": {

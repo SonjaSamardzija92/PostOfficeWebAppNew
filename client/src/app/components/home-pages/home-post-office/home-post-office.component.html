@@ -1,0 +1,36 @@
+<div class="welcome-container">
+  <div class="welcome-header">
+    <h2>📬Manage System</h2>
+    <p>Choose an action to get started:</p>
+  </div>
+
+  <div class="action-grid">
+    <!-- Post Office Action Box -->
+    <div class="action-box post-office-box">
+      <h3>📍 Post Offices</h3>
+      <p>Manage post office locations</p>
+      <div class="btn-container">
+        <button class="btn btn-primary" routerLink="/postOffice/create">
+          Create a New Post Office Location
+        </button>
+        <button class="btn btn-outline-primary" routerLink="/postOffices">
+          View All Post Offices Location
+        </button>
+      </div>
+    </div>
+
+    <!-- Shipments Action Box -->
+    <div class="action-box shipment-box">
+      <h3>📦 Shipments</h3>
+      <p>Manage packages and letters</p>
+      <div class="btn-container">
+        <button class="btn btn-primary" routerLink="/shipments/create">
+          Create a New Shipment
+        </button>
+        <button class="btn btn-outline-primary" routerLink="/shipments">
+          View All Shipments
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

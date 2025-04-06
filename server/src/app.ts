@@ -1,24 +1,28 @@
-import express, { Application, Request, Response } from "express";
+import express, { Express, Request, Response } from "express";
 import cors from "cors";
-import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import router from "./routes";
+import { connectDB } from "./config/db";
 
-const app: Application = express();
-const PORT = process.env.PORT || 3000;
+dotenv.config();
 
-// Middleware
+const app: Express = express();
+const port = process.env.PORT ?? 4000;
+
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.get("/api/hello", (req: Request, res: Response) => {
-  res.json({ message: "Hello from the TypeScript backend!" });
+connectDB();
+
+app.get("/", (req: Request, res: Response) => {
+  res.send("Post Office Management System API");
 });
 
-app.post("/api/echo", (req: Request, res: Response) => {
-  res.json({ received: req.body });
+app.use(router);
+
+app.listen(port, () => {
+  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
-});
+export default app;
