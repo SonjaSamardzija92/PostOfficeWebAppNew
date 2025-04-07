@@ -14,7 +14,7 @@ export class PostOfficeService {
         return this.http.post<PostOfficeInfo>(this.apiUrl, psInfo);
     }
 
-    public getPostOffices(zipCode?: string,): Observable<PostOfficeInfo[]> {
+    public getPostOffices(zipCode?: string): Observable<PostOfficeInfo[]> {
         let params = new HttpParams();
         if (zipCode) {
             params = params.set('zipCode', zipCode);

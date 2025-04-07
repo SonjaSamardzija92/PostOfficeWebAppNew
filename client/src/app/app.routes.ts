@@ -13,10 +13,12 @@ export const routes: Routes = [
     { path: 'login', component: LoginPageComponent },
     { path: 'register', component: RegistrationComponent },
     { path: 'home', component: HomePostOfficeComponent },
+
     { path: 'postOffice/create', component: PostOfficeFormComponent },
     { path: 'postOffices', component: PostOfficeListComponent },
     { path: 'postOffices/:zipCode/edit', component: PostOfficeFormComponent },
+
     { path: 'shipment/create', component: ShipmentFormComponent },
     { path: 'shipments', component: ShipmentListComponent },
-    { path: 'shipments/:shipmentNumber/edit', component: ShipmentListComponent },
+    { path: 'shipments/:shipmentNumber/edit', component: ShipmentFormComponent },
 ];

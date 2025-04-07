@@ -3,17 +3,19 @@
     "configurations": [
         {
             "type": "node",
-            "request": "launch",
-            "name": "Debug Server",
-            "skipFiles": ["<node_internals>/**"],
-            "program": "${workspaceFolder}/src/app.ts",
-            "runtimeArgs": ["--loader", "ts-node/esm"],
-            "env": {
-              "NODE_ENV": "development"
-            },
-            "console": "integratedTerminal"
-          },
-
+            "request": "attach",
+            "name": "Attach",
+            "port": 9229,
+            "restart": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "sourceMaps": true,
+            "resolveSourceMapLocations": [
+                "**",
+                "!**/node_modules/**"
+            ]
+        },
         {
             "type": "node",
             "request": "launch",

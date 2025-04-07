@@ -35,12 +35,12 @@ User.init(
     username: {
       type: DataTypes.STRING,
       allowNull: false,
-    }
+    },
   },
   {
     sequelize, // The connection instance
     modelName: "User", // The name of the model
-  }
+  },
 );
 
 // Before creating or updating a user, hash the password

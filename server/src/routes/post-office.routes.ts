@@ -6,8 +6,8 @@ const postOfficeController = new PostOfficeController();
 
 router.post("/", postOfficeController.createNewPostOffice);
 router.get("/", postOfficeController.getPostOffices.bind(postOfficeController));
-router.delete("/:zipCode", postOfficeController.deletePostOffice);
-router.put("/:zipCode", postOfficeController.updatePostOffice);
-router.get("/:zipCode", postOfficeController.getPostOfficeByZipCode);
+router.delete("/:shipmentNumber", postOfficeController.deletePostOffice);
+router.put("/:shipmentNumber", postOfficeController.updatePostOffice);
+router.get("/:shipmentNumber", postOfficeController.getPostOfficeByZipCode);
 
 export default router;

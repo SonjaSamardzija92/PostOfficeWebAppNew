@@ -18,6 +18,7 @@ export class PostOfficeListComponent implements OnInit {
   public currentPage = 1;
   public pageSize = 5;
   public numberOfPages: number[] = [];
+  public totalItems = 0;
 
   constructor(
     private readonly _fb: FormBuilder,
@@ -29,26 +30,17 @@ export class PostOfficeListComponent implements OnInit {
       zipCode: [''],
     });
 
-    this.loadPostOffices();
+    this.getPostOffices();
     this.filterSubscription();
   }
 
-  public loadPostOffices(): void {
-    this._postOfficeService.getPostOffices().subscribe((response) => {
+  public getPostOffices(): void {
+    this._postOfficeService.getPostOffices(this.filterForm.value?.zipCode).subscribe((response) => {
       this.dataToDisplay = response;
       this.postOffices = response;
+      this.totalItems = this.dataToDisplay.length;
       this.updatePagination();
-      this.applyFilter();
     });
-  }
-
-  public applyFilter(): void {
-    const filters = this.filterForm.value;
-    if (filters.zipCode && filters.zipCode.length > 0) {
-      this.dataToDisplay = this.postOffices.filter((office: PostOfficeInfo) =>
-        filters.zipCode ? office.zipCode.includes(filters.zipCode) : true
-      );
-    }
   }
 
   public onPageChange(page: number): void {
@@ -62,14 +54,14 @@ export class PostOfficeListComponent implements OnInit {
     if (confirm('Are you sure you want to delete this post office?')) {
       this._postOfficeService
         .deletePostOffice(zipCode)
-        .subscribe(() => this.loadPostOffices());
+        .subscribe(() => this.getPostOffices());
     }
   }
 
   private filterSubscription(): void {
     this.filterForm.valueChanges.subscribe(() => {
       this.currentPage = 1;
-      this.updateDataToDisplay();
+      this.getPostOffices();
     });
   }
 

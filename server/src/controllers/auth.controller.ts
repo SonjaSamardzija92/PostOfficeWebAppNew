@@ -1,9 +1,8 @@
-import { Request, Response } from 'express';
-import { User } from '../models/commonModels';
+import { Request, Response } from "express";
+import { User } from "../models/commonModels";
 import bcrypt from "bcryptjs";
 
 export class AuthController {
-
   public async login(req: Request, res: Response): Promise<void> {
     const { email, password } = req.body;
 
@@ -32,7 +31,7 @@ export class AuthController {
       console.error(err);
       res.status(500).json({ message: "Failed to login" });
     }
-  };
+  }
 
   public async registration(req: Request, res: Response): Promise<void> {
     try {
@@ -41,7 +40,7 @@ export class AuthController {
       // Check if the user already exists
       const existingUser = await User.findOne({ where: { email } });
       if (existingUser) {
-        res.status(400).json({ message: 'User already exists' });
+        res.status(400).json({ message: "User already exists" });
       }
 
       // Create a new user
@@ -51,5 +50,5 @@ export class AuthController {
       console.error(err);
       res.status(500).json({ message: "Failed to registration" });
     }
-  };
+  }
 }

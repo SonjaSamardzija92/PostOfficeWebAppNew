@@ -1,1 +1,125 @@
-<p>shipment-form works!</p>
+<div
+  class="container d-flex justify-content-center align-items-center min-vh-100"
+>
+  <div class="form-wrapper">
+    <h2 class="form-title">
+      📦 {{ isEditMode ? "Edit" : "Create new" }} Shipment
+    </h2>
+
+    <form [formGroup]="shipmentForm" (ngSubmit)="onSubmit()">
+      <div class="form-group mb-3">
+        <label class="form-label" for="shipmentId">Shipment Number</label>
+        <input
+          type="text"
+          id="shipmentId"
+          class="form-control"
+          formControlName="shipmentNumber"
+          placeholder="Enter Shipment Number"
+        />
+        <div
+          *ngIf="
+            shipmentForm.get('shipmentNumber')?.invalid &&
+            shipmentForm.get('shipmentNumber')?.touched
+          "
+          class="text-danger"
+        >
+          Shipment number is required.
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="actualWeight" class="form-label">Weight (kg)</label>
+        <input
+          type="number"
+          class="form-control"
+          formControlName="actualWeight"
+          id="actualWeight"
+        />
+      </div>
+
+      <div class="mb-3 d-block">
+        <label for="shipmentStatus" class="form-label">Status</label>
+        <select
+          class="form-select"
+          formControlName="status"
+          id="shipmentStatus"
+        >
+          <option value="" disabled selected>Select Status</option>
+          <option *ngFor="let status of shipmentStatus" [value]="status">
+            {{ status }}
+          </option>
+        </select>
+        <div
+          *ngIf="
+            shipmentForm.get('status')?.invalid &&
+            shipmentForm.get('status')?.touched
+          "
+          class="text-danger"
+        >
+          Status is required.
+        </div>
+      </div>
+
+      <div class="mb-3 d-block">
+        <label for="shipmentType" class="form-label">Shipment Type</label>
+        <select class="form-select" formControlName="type" id="shipmentType">
+          <option value="" disabled selected>Select Type</option>
+          <option *ngFor="let type of shipmentTpe" [value]="type">
+            {{ type }}
+          </option>
+        </select>
+
+        <div
+          *ngIf="
+            shipmentForm.get('type')?.invalid &&
+            shipmentForm.get('type')?.touched
+          "
+          class="text-danger"
+        >
+          Shipment Type required.
+        </div>
+      </div>
+
+      <div class="mb-3 d-block">
+        <label for="originZipCode" class="form-label">Origin Post Office</label>
+        <select
+          class="form-select"
+          formControlName="originZipCode"
+          id="originZipCode"
+        >
+          <option value="" disabled selected>Select Origin Post Office</option>
+          <option *ngFor="let office of postOffices" [value]="office.zipCode">
+            {{ office.zipCode }} - {{ office.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="mb-3 d-block">
+        <label for="destinationZipCode" class="form-label"
+          >Destination Post Office</label
+        >
+        <select
+          class="form-select"
+          formControlName="destinationZipCode"
+          id="destinationZipCode"
+        >
+          <option value="" disabled selected>
+            Select Destination Post Office
+          </option>
+          <option *ngFor="let office of postOffices" [value]="office.zipCode">
+            {{ office.zipCode }} - {{ office.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="d-flex gap-2 pt-3 justify-content-center">
+        <button type="submit" class="btn btn-primary">
+          {{ isEditMode ? "Update" : "Add" }}
+        </button>
+        <button type="button" class="btn btn-secondary" routerLink="/home">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

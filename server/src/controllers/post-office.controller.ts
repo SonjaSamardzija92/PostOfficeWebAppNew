@@ -1,9 +1,8 @@
-import { Request, Response } from 'express';
-import { PostOffice } from '../models/commonModels';
+import { Request, Response } from "express";
+import { PostOffice } from "../models/commonModels";
 import { Op } from "sequelize";
 
 export class PostOfficeController {
-
   public async createNewPostOffice(req: Request, res: Response): Promise<void> {
     const { zipCode } = req.body;
     try {
@@ -11,33 +10,33 @@ export class PostOfficeController {
         where: { zipCode },
       });
       if (existingPostOffice) {
-        res
-          .status(400)
-          .json({ error: `Post office with zip code ${zipCode} already exists` });
+        res.status(400).json({
+          error: `Post office with zip code ${zipCode} already exists`,
+        });
       } else {
         const postOffice = await PostOffice.create(req.body);
         res.status(201).json(postOffice);
       }
     } catch (error) {
-      res.status(500).json({ error: `Failed to create post office with zip code ${zipCode}` });
+      res.status(500).json({
+        error: `Failed to create post office with zip code ${zipCode}`,
+      });
     }
-  };
+  }
 
   public async getPostOffices(req: Request, res: Response): Promise<void> {
     try {
-
       const { zipCode } = req.query;
 
       const whereClause: any = {};
-      if (zipCode as string) {
+      if (typeof zipCode === "string") {
         whereClause.zipCode = { [Op.iLike]: `%${zipCode}%` };
       }
 
-      const { rows: postOffices } =
-        await PostOffice.findAndCountAll({
-          where: whereClause,
-          order: [["createdAt", "ASC"]],
-        });
+      const { rows: postOffices } = await PostOffice.findAndCountAll({
+        where: whereClause,
+        order: [["createdAt", "ASC"]],
+      });
 
       res.status(200).json(postOffices);
     } catch (error) {
@@ -87,7 +86,7 @@ export class PostOfficeController {
         res.status(200).json(postOffice);
       }
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch post office" });
+      res.status(500).json({ error: "Failed to find post office" });
     }
   }
 }

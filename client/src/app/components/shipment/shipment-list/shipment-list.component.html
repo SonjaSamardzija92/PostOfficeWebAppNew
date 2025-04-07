@@ -1,1 +1,168 @@
-<p>shipment-list works!</p>
+<div class="card">
+  <div
+    class="card-header d-flex justify-content-between align-items-center mb-4"
+  >
+    <h5>Manage Shipments</h5>
+    <a href="/home" class="btn btn-secondary">Home</a>
+  </div>
+
+  <div class="card-body">
+    <div class="card-body">
+      <form [formGroup]="filterForm" class="d-flex flex-wrap gap-3 mb-4">
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status" class="form-select" formControlName="status">
+            <option value="">All Statuses</option>
+            <option *ngFor="let status of shipmentStatuses" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="originZipCode">Origin Post Office</label>
+          <select
+            id="originZipCode"
+            class="form-select"
+            formControlName="originZipCode"
+          >
+            <option value="">All Origins</option>
+            <option *ngFor="let office of postOffices" [value]="office.zipCode">
+              {{ office.zipCode }} - {{ office.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="destinationZipCode">Destination Post Office</label>
+          <select
+            id="destinationZipCode"
+            class="form-select"
+            formControlName="destinationZipCode"
+          >
+            <option value="">All Destinations</option>
+            <option *ngFor="let office of postOffices" [value]="office.zipCode">
+              {{ office.zipCode }} - {{ office.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="weightCategory">Weight Category</label>
+          <select
+            id="weightCategory"
+            class="form-select"
+            formControlName="weightCategory"
+          >
+            <option value="">All Categories</option>
+            <option
+              *ngFor="let category of weightCategories"
+              [value]="category"
+            >
+              {{ category }}
+            </option>
+          </select>
+        </div>
+
+        <div class="align-self-end">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="resetFilters()"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </form>
+
+      <div
+        *ngIf="dataToDisplay.length === 0"
+        class="alert alert-warning text-center"
+      >
+        No shipments available to display.
+      </div>
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Shipment Number</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Weight</th>
+            <th>Origin</th>
+            <th>Destination</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let shipment of dataToDisplay">
+            <td>{{ shipment.shipmentNumber }}</td>
+            <td>{{ shipment.type }}</td>
+            <td>{{ shipment.status }}</td>
+            <td>{{ shipment.actualWeight }} kg</td>
+            <td>{{ shipment.originZipCode }}</td>
+            <td>{{ shipment.destinationZipCode }}</td>
+            <td>
+              <button
+                class="btn btn-sm btn-primary"
+                [routerLink]="['/shipments', shipment.shipmentNumber, 'edit']"
+              >
+                Edit
+              </button>
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="onDeleteShipment(shipment.shipmentNumber)"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="dataToDisplay.length > 0" class="pagination-container">
+        <div class="total-items">
+          <span *ngIf="totalItems">Total items: {{ totalItems }}</span>
+        </div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button
+                class="page-link"
+                (click)="onPageChange(currentPage - 1)"
+                aria-label="Previous"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </button>
+            </li>
+
+            <li
+              *ngFor="let page of numberOfPages"
+              class="page-item"
+              [class.active]="page === currentPage"
+            >
+              <button class="page-link" (click)="onPageChange(page)">
+                {{ page }}
+              </button>
+            </li>
+
+            <li
+              class="page-item"
+              [class.disabled]="
+                currentPage === numberOfPages.length ||
+                dataToDisplay.length === 0
+              "
+            >
+              <button
+                class="page-link"
+                (click)="onPageChange(currentPage + 1)"
+                aria-label="Next"
+              >
+                <span aria-hidden="true">&raquo;</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
