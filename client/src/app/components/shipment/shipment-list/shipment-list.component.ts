@@ -2,15 +2,23 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { PostOfficeService } from 'src/app/services/post-office.service';
-import { ShipmentService } from 'src/app/services/shipments.service';
-import { PostOfficeInfo, Shipment, ShipmentStatus, ShipmentType, WeightCategory } from '../../model';
+import { PostOfficeService } from '../../../services/post-office.service';
+import { ShipmentService } from '../../../services/shipments.service';
+import {
+  PostOfficeInfo,
+  Shipment,
+  ShipmentStatus,
+  ShipmentType,
+  WeightCategory,
+} from '../../model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { showErrorSnack } from '../../../util/error-utils';
 
 @Component({
   selector: 'app-shipment-list',
   imports: [RouterModule, ReactiveFormsModule, CommonModule],
   templateUrl: './shipment-list.component.html',
-  styleUrl: './shipment-list.component.scss'
+  styleUrl: './shipment-list.component.scss',
 })
 export class ShipmentListComponent {
   public filterForm!: FormGroup;
@@ -30,8 +38,8 @@ export class ShipmentListComponent {
     private readonly _shipmentService: ShipmentService,
     private readonly _postOfficeService: PostOfficeService,
     private readonly _fb: FormBuilder,
-  ) {
-  }
+    private readonly snackBar: MatSnackBar
+  ) {}
 
   public ngOnInit(): void {
     this.filterForm = this.initializeFilterForm();
@@ -42,28 +50,41 @@ export class ShipmentListComponent {
 
   private getShipments(): void {
     const filters = {
-      ...this.filterForm.value
+      ...this.filterForm.value,
     };
 
-    this._shipmentService.getShipments(filters).subscribe((response) => {
-      this.dataToDisplay = response;
-      this.shipments = response;
-      this.totalItems = this.dataToDisplay.length;
-      this.updatePagination();
+    this._shipmentService.getShipments(filters).subscribe({
+      next: (response) => {
+        this.dataToDisplay = response;
+        this.shipments = response;
+        this.totalItems = this.dataToDisplay.length;
+        this.updatePagination();
+      },
+      error: (error) => {
+        showErrorSnack(this.snackBar, error, 'Failed to get shipments');
+      },
     });
   }
 
   public getPostOffices(): void {
-    this._postOfficeService.getPostOffices().subscribe((response) => {
-      this.postOffices = response;
+    this._postOfficeService.getPostOffices().subscribe({
+      next: (response) => {
+        this.postOffices = response;
+      },
+      error: (error) => {
+        showErrorSnack(this.snackBar, error, 'Failed to get post offices');
+      },
     });
   }
 
   public onDeleteShipment(id: string): void {
     if (confirm('Are you sure you want to delete this shipment?')) {
-      this._shipmentService
-        .deleteShipment(id)
-        .subscribe(() => this.getShipments());
+      this._shipmentService.deleteShipment(id).subscribe({
+        next: () => this.getShipments(),
+        error: (error) => {
+          showErrorSnack(this.snackBar, error, 'Failed to delete shipment');
+        },
+      });
     }
   }
 

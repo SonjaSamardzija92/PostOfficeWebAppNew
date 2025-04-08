@@ -1,8 +1,16 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
+<div
+  class="container d-flex justify-content-center align-items-center min-vh-100"
+>
   <div class="form-wrapper">
-    <h2 class="form-title">
-      📮 {{ isEditMode ? "Edit" : "Create new" }} Post Office Location
-    </h2>
+    <div class="position-relative text-center mb-4">
+      <h2 class="form-title">
+        📮 {{ isEditMode ? "Edit" : "Create new" }} Post Office Location
+      </h2>
+      <div class="position-absolute top-0 end-0 d-flex gap-2">
+        <a href="/home" class="btn btn-secondary">Home</a>
+        <a href="/login" class="btn btn-secondary">Log out</a>
+      </div>
+    </div>
 
     <form [formGroup]="postOfficeForm" (ngSubmit)="onSubmit()">
       <div class="form-group mb-3">

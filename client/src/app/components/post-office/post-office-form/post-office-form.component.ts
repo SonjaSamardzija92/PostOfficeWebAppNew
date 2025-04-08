@@ -10,6 +10,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { showErrorSnack } from '../../../util/error-utils';
 
 @Component({
   selector: 'app-post-office-form',
@@ -27,6 +29,7 @@ export class PostOfficeFormComponent implements OnInit {
     public readonly postOfficeService: PostOfficeService,
     public readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly snackBar: MatSnackBar
   ) {
     this.postOfficeForm = this.fb.group({
       name: ['', Validators.required],
@@ -56,22 +59,29 @@ export class PostOfficeFormComponent implements OnInit {
     // Set edit mode to true
     this.isEditMode = true;
 
-    this.postOfficeService.getPostOfficeByZipCode(this.zipCode).pipe(
-      map(postOffice => {
-        // Handle post office data and patch form values here
-        if (postOffice) {
-          this.postOfficeForm.patchValue({
-            name: postOffice.name,
-            address: postOffice.address,
-            zipCode: postOffice.zipCode,
-          });
-        }
-      }),
-      catchError(error => {
-        console.error('Error fetching post office data:', error);
-        return of(null); // or handle the error in some way
-      })
-    ).subscribe();
+    this.postOfficeService
+      .getPostOfficeByZipCode(this.zipCode)
+      .pipe(
+        map((postOffice) => {
+          // Handle post office data and patch form values here
+          if (postOffice) {
+            this.postOfficeForm.patchValue({
+              name: postOffice.name,
+              address: postOffice.address,
+              zipCode: postOffice.zipCode,
+            });
+          }
+        }),
+        catchError((error) => {
+          showErrorSnack(
+            this.snackBar,
+            error,
+            'Error fetching post office data'
+          );
+          return of(null);
+        })
+      )
+      .subscribe();
   }
 
   public onSubmit(): void {
@@ -79,11 +89,29 @@ export class PostOfficeFormComponent implements OnInit {
       if (this.isEditMode && this.zipCode) {
         this.postOfficeService
           .updatePostOffice(this.zipCode, this.postOfficeForm.value)
-          .subscribe(() => this.router.navigate(['/postOffices']));
+          .subscribe({
+            next: () => this.router.navigate(['/postOffices']),
+            error: (error) => {
+              showErrorSnack(
+                this.snackBar,
+                error,
+                'Failed to update post office'
+              );
+            },
+          });
       } else {
         this.postOfficeService
           .createNewPostOffice(this.postOfficeForm.value)
-          .subscribe(() => this.router.navigate(['/postOffices']));
+          .subscribe({
+            next: () => this.router.navigate(['/postOffices']),
+            error: (error) => {
+              showErrorSnack(
+                this.snackBar,
+                error,
+                'Failed to create post office'
+              );
+            },
+          });
       }
     }
   }

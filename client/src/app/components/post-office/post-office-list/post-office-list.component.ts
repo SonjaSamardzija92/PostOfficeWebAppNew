@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PostOfficeInfo } from '../../model';
 import { PostOfficeService } from '../../../services/post-office.service';
+import { showErrorSnack } from '../../../util/error-utils';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-post-office-list',
@@ -22,7 +24,8 @@ export class PostOfficeListComponent implements OnInit {
 
   constructor(
     private readonly _fb: FormBuilder,
-    private readonly _postOfficeService: PostOfficeService
+    private readonly _postOfficeService: PostOfficeService,
+    private readonly snackBar: MatSnackBar
   ) {}
 
   public ngOnInit(): void {
@@ -35,12 +38,19 @@ export class PostOfficeListComponent implements OnInit {
   }
 
   public getPostOffices(): void {
-    this._postOfficeService.getPostOffices(this.filterForm.value?.zipCode).subscribe((response) => {
-      this.dataToDisplay = response;
-      this.postOffices = response;
-      this.totalItems = this.dataToDisplay.length;
-      this.updatePagination();
-    });
+    this._postOfficeService
+      .getPostOffices(this.filterForm.value?.zipCode)
+      .subscribe({
+        next: (response) => {
+          this.dataToDisplay = response;
+          this.postOffices = response;
+          this.totalItems = this.dataToDisplay.length;
+          this.updatePagination();
+        },
+        error: (error) => {
+          showErrorSnack(this.snackBar, error, 'Failed to get post offices');
+        },
+      });
   }
 
   public onPageChange(page: number): void {
@@ -52,9 +62,12 @@ export class PostOfficeListComponent implements OnInit {
 
   public onDeletePostOffice(zipCode: string): void {
     if (confirm('Are you sure you want to delete this post office?')) {
-      this._postOfficeService
-        .deletePostOffice(zipCode)
-        .subscribe(() => this.getPostOffices());
+      this._postOfficeService.deletePostOffice(zipCode).subscribe({
+        next: () => this.getPostOffices(),
+        error: (error) => {
+          showErrorSnack(this.snackBar, error, 'Failed to delete post office');
+        },
+      });
     }
   }
 

@@ -13,10 +13,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { PostOfficeService } from '../../../services/post-office.service';
-import { ShipmentService } from 'src/app/services/shipments.service';
+import { ShipmentService } from '../../../services/shipments.service';
 import { CommonModule } from '@angular/common';
 import { catchError, map } from 'rxjs/operators';
 import { of } from 'rxjs/internal/observable/of';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { showErrorSnack } from '../../../util/error-utils';
 
 @Component({
   selector: 'app-shipment-form',
@@ -39,7 +41,8 @@ export class ShipmentFormComponent implements OnInit {
     private readonly _postOfficeService: PostOfficeService,
     private readonly _fb: FormBuilder,
     private readonly _router: Router,
-    private readonly _activeRoute: ActivatedRoute
+    private readonly _activeRoute: ActivatedRoute,
+    private readonly _snackBar: MatSnackBar
   ) {
     this.shipmentForm = this.initializeShipmentForm();
   }
@@ -47,32 +50,36 @@ export class ShipmentFormComponent implements OnInit {
   public ngOnInit(): void {
     this.getPostOffices();
 
-    this.isEditMode = true;
-    this.shipmentNumber = this._activeRoute.snapshot.paramMap?.get('shipmentNumber');
+    this.shipmentNumber =
+      this._activeRoute.snapshot.paramMap?.get('shipmentNumber');
 
     // If no shipmentNumber is found, exit early
     if (!this.shipmentNumber) {
       return;
     }
 
-    this._shipmentService.getShipmentByID(this.shipmentNumber).pipe(
-      map(shipment => {
-        if (shipment) {
-          this.shipmentForm.patchValue({
-            type: shipment.type,
-            shipmentNumber: shipment.shipmentNumber,
-            actualWeight: shipment.actualWeight,
-            originZipCode: shipment.originZipCode,
-            destinationZipCode: shipment.destinationZipCode,
-            status: shipment.status,
-          });
-        }
-      }),
-      catchError(error => {
-        console.error('Error fetching post office data:', error);
-        return of(null); // or handle the error in some way
-      })
-    ).subscribe();
+    this.isEditMode = true;
+    this._shipmentService
+      .getShipmentByID(this.shipmentNumber)
+      .pipe(
+        map((shipment) => {
+          if (shipment) {
+            this.shipmentForm.patchValue({
+              type: shipment.type,
+              shipmentNumber: shipment.shipmentNumber,
+              actualWeight: shipment.actualWeight,
+              originZipCode: shipment.originZipCode,
+              destinationZipCode: shipment.destinationZipCode,
+              status: shipment.status,
+            });
+          }
+        }),
+        catchError((error) => {
+          showErrorSnack(this._snackBar, error, 'Error fetching shipment data');
+          return of(null);
+        })
+      )
+      .subscribe();
   }
 
   public onSubmit(): void {
@@ -80,11 +87,29 @@ export class ShipmentFormComponent implements OnInit {
       if (this.isEditMode && this.shipmentNumber) {
         this._shipmentService
           .updateShipment(this.shipmentNumber, this.shipmentForm.value)
-          .subscribe(() => this._router.navigate(['/shipments']));
+          .subscribe({
+            next: () => this._router.navigate(['/shipments']),
+            error: (error) => {
+              showErrorSnack(
+                this._snackBar,
+                error,
+                'Failed to update shipment'
+              );
+            },
+          });
       } else {
         this._shipmentService
           .createShipment(this.shipmentForm.value)
-          .subscribe(() => this._router.navigate(['/shipments']));
+          .subscribe({
+            next: () => this._router.navigate(['/shipments']),
+            error: (error) => {
+              showErrorSnack(
+                this._snackBar,
+                error,
+                'Failed to create shipment'
+              );
+            },
+          });
       }
     }
   }
@@ -101,8 +126,11 @@ export class ShipmentFormComponent implements OnInit {
   }
 
   private getPostOffices(): void {
-    this._postOfficeService
-      .getPostOffices()
-      .subscribe((offices: PostOfficeInfo[]) => (this.postOffices = offices));
+    this._postOfficeService.getPostOffices().subscribe({
+      next: (offices: PostOfficeInfo[]) => (this.postOffices = offices),
+      error: (error) => {
+        showErrorSnack(this._snackBar, error, 'Failed to get post offices');
+      },
+    });
   }
 }

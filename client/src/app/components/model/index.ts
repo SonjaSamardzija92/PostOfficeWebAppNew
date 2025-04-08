@@ -1,6 +1,6 @@
 export interface AuthInfo {
     email: string;
-    username: string;
+    username?: string;
     password: string;
 }
 

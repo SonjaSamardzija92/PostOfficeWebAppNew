@@ -1,0 +1,25 @@
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin: 0 0.25rem;
+}
+
+.edit-btn {
+    color: #007bff; /* Bootstrap blue */
+}
+
+.delete-btn {
+    color: #dc3545; /* Bootstrap red */
+}
+
+.delete-btn:hover {
+    color: #a71d2a;
+    transform: scale(1.2);
+}
+
+.edit-btn:hover {
+    color: #0056b3;
+    transform: scale(1.2);
+}
