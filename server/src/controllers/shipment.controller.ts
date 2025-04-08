@@ -1,22 +1,31 @@
 import { Request, Response } from "express";
-import { PostOffice, Shipment } from "../models/commonModels";
-import { Op } from "sequelize";
+import { Shipment } from "../models/commonModels";
 import { ShipmentFilters } from "../models/models";
 
 export class ShipmentController {
   public async createShipment(req: Request, res: Response): Promise<void> {
     try {
       const shipmentData = req.body;
-      shipmentData.weightCategory = this.assignWeightCategory(
-        shipmentData.actualWeight,
-      );
-
-      const newShipment = await Shipment.create(shipmentData);
-
-      res.status(201).json({
-        message: "Shipment created successfully",
-        shipment: newShipment,
+      const { shipmentNumber } = shipmentData;
+      const existingItem = await Shipment.findOne({
+        where: { shipmentNumber },
       });
+      if (existingItem) {
+        res.status(400).json({
+          error: `Shipment with shipmentNumber ${shipmentNumber} already exists`,
+        });
+      } else {
+        shipmentData.weightCategory = this.assignWeightCategory(
+          shipmentData.actualWeight,
+        );
+
+        const newShipment = await Shipment.create(shipmentData);
+
+        res.status(201).json({
+          message: "Shipment created successfully",
+          shipment: newShipment,
+        });
+      }
     } catch (error) {
       console.error("Error creating shipment:", error);
       res.status(500).json({ error: "Failed to create shipment" });
