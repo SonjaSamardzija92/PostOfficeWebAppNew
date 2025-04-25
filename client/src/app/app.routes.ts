@@ -7,9 +7,12 @@ import { PostOfficeFormComponent } from './components/post-office/post-office-fo
 import { PostOfficeListComponent } from './components/post-office/post-office-list/post-office-list.component';
 import { ShipmentFormComponent } from './components/shipment/shipment-form/shipment-form.component';
 import { ShipmentListComponent } from './components/shipment/shipment-list/shipment-list.component';
+import { Parent } from './components/home-pages/parent/parent.component';
+import { ChildTable } from './components/home-pages/child-table/child-table.component';
 
 export const routes: Routes = [
     { path: '', component: HomePage },
+    { path: 'parent', component: Parent },
     { path: 'login', component: LoginPageComponent },
     { path: 'register', component: RegistrationComponent },
     { path: 'home', component: HomePostOfficeComponent },
@@ -21,4 +24,6 @@ export const routes: Routes = [
     { path: 'shipment/create', component: ShipmentFormComponent },
     { path: 'shipments', component: ShipmentListComponent },
     { path: 'shipments/:shipmentNumber/edit', component: ShipmentFormComponent },
+
+    { path: 'table', component: ChildTable },
 ];

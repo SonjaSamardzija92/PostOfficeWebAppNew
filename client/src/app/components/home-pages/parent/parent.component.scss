@@ -1,0 +1,33 @@
+.container {
+  max-width: 100%;
+  margin: 8rem auto;
+  padding: 3rem 2rem;
+  text-align: center;
+  background-color: #fefefe;
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  gap: 2rem;
+
+  .child {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3rem;
+    max-width: 100%;
+    width: 100%;
+  }
+
+  h1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 2rem;
+    font-weight: 600;
+  }
+
+  child-table,
+  chart {
+    max-width: 50%;
+    min-width: 50%;
+    flex: 1;
+  }
+}
